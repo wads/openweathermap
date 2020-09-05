@@ -1,6 +1,9 @@
 package openweathermap
 
-import "net/url"
+import (
+	"net/url"
+	"strconv"
+)
 
 type Config struct {
 	APIKey string
@@ -9,9 +12,15 @@ type Config struct {
 	Lang   string
 }
 
+type degree float64
+
+func (d degree) String() string {
+	return strconv.FormatFloat(float64(d), 'f', -1, 64)
+}
+
 type Coordinates struct {
-	Lat float64 `json:"lat"`
-	Lon float64 `json:"lon"`
+	Lat degree `json:"lat"`
+	Lon degree `json:"lon"`
 }
 
 type OptionParameters interface {
