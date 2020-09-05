@@ -22,14 +22,6 @@ const cityListURL = "http://bulk.openweathermap.org/sample/city.list.json.gz"
 
 var openWeatherMapCity *OpenWeatherMapCity
 
-func (c Coordinates) GetLatitude() float64 {
-	return c.Lat
-}
-
-func (c Coordinates) GetLongitude() float64 {
-	return c.Lon
-}
-
 func NewOpenWeatherMapCity() (*OpenWeatherMapCity, error) {
 	if openWeatherMapCity == nil {
 		raw, err := loadCityListJSON()
