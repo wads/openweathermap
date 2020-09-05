@@ -27,7 +27,7 @@ type OptionParameters interface {
 	urlValues() url.Values
 }
 
-var (
+const (
 	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
 )
 
