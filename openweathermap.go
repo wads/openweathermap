@@ -23,6 +23,13 @@ type Coordinates struct {
 	Lon degree `json:"lon"`
 }
 
+func (c *Coordinates) Valid() bool {
+	if c.Lat < -90 && c.Lat > 90 {
+		return false
+	}
+	return true
+}
+
 type OptionParameters interface {
 	urlValues() url.Values
 }
@@ -88,7 +95,7 @@ func validLang(lang string) bool {
 	return lang != ""
 }
 
-func qqq(config Config, url string, params OptionParameters) string {
+func apiURL(config Config, url string, params OptionParameters) string {
 	values := params.urlValues()
 	values.Set("appid", config.APIKey)
 

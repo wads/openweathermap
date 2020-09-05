@@ -2,11 +2,10 @@ package openweathermap
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 type CurrentAndForecastWeather struct {
@@ -103,44 +102,57 @@ type OneCallApi struct {
 }
 
 type OneCallApiParams struct {
-	Coord   Coordinates
+	Coord   *Coordinates
 	Exclude string
 }
 
 func (p OneCallApiParams) urlValues() url.Values {
 	values := url.Values{}
-	values.Set("lat", strconv.FormatFloat(p.Coord.Lat, 'f', -1, 64))
-	values.Set("lon", strconv.FormatFloat(p.Coord.Lon, 'f', -1, 64))
-	values.Set("exclude", p.Exclude)
+
+	if p.Coord != nil {
+		values.Set("lat", p.Coord.Lat.String())
+		values.Set("lon", p.Coord.Lon.String())
+	}
+
+	if len(p.Exclude) > 0 {
+		values.Set("exclude", p.Exclude)
+	}
+
 	return values
 }
 
 func NewOneCallApi(config Config) *OneCallApi {
 	params := OneCallApiParams{}
-	return &OneCallApi{config, oneCallURL, params}
+	return &OneCallApi{
+		Config: config,
+		URL:    oneCallURL,
+		Params: params,
+	}
 }
 
 func (a *OneCallApi) CurrentAndForecastByCoordinates(coord Coordinates) (*CurrentAndForecastWeather, error) {
-	a.Params.Coord = coord
+	if !coord.Valid() {
+		return nil, errors.New("Invalid Coordinates value")
+	}
+	a.Params.Coord = &coord
 
-	response := CurrentAndForecastWeather{}
-
-	url := qqq(a.Config, a.URL, a.Params)
-	fmt.Println(url)
-
+	url := apiURL(a.Config, a.URL, a.Params)
 	res, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(res)
+
 	body, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {
 		return nil, err
 	}
+
+	response := CurrentAndForecastWeather{}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return nil, err
 	}
+
 	return &response, nil
 }
