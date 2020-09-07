@@ -5,6 +5,10 @@ import (
 	"strconv"
 )
 
+const (
+	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
+)
+
 type Config struct {
 	APIKey string
 	Mode   string
@@ -33,10 +37,6 @@ func (c *Coordinates) Valid() bool {
 type OptionParameters interface {
 	urlValues() url.Values
 }
-
-const (
-	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
-)
 
 type Weather struct {
 	ID          int    `json:"id"`
