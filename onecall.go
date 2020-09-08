@@ -96,7 +96,7 @@ type FeelsLike struct {
 }
 
 type OneCallApi struct {
-	Config Config
+	Config *Config
 	URL    string
 	Params OneCallApiParams
 }
@@ -121,13 +121,16 @@ func (p OneCallApiParams) urlValues() url.Values {
 	return values
 }
 
-func NewOneCallApi(config Config) *OneCallApi {
-	params := OneCallApiParams{}
+func NewOneCallApi(config *Config) (*OneCallApi, error) {
+	if !config.Valid() {
+		return nil, errors.New("Invalid Config value")
+	}
+
 	return &OneCallApi{
 		Config: config,
 		URL:    oneCallURL,
-		Params: params,
-	}
+		Params: OneCallApiParams{},
+	}, nil
 }
 
 func (a *OneCallApi) CurrentAndForecastByCoordinates(coord Coordinates) (*CurrentAndForecastWeather, error) {

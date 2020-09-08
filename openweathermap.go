@@ -16,6 +16,10 @@ type Config struct {
 	Lang   string
 }
 
+func (c *Config) Valid() bool {
+	return len(c.APIKey) > 0
+}
+
 type degree float64
 
 func (d degree) String() string {
@@ -95,7 +99,7 @@ func validLang(lang string) bool {
 	return lang != ""
 }
 
-func apiURL(config Config, url string, params OptionParameters) string {
+func apiURL(config *Config, url string, params OptionParameters) string {
 	values := params.urlValues()
 	values.Set("appid", config.APIKey)
 
