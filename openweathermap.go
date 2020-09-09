@@ -5,6 +5,68 @@ import (
 	"strconv"
 )
 
+var Modes = map[string]string{
+	"xml":  "xml",
+	"html": "html",
+}
+
+var Units = map[string]string{
+	"imperial": "Fahrenheit",
+	"metric":   "Celsius",
+}
+
+var LanguageCodes = map[string]string{
+	"af":    "Afrikaans",
+	"al":    "Albanian",
+	"ar":    "Arabic",
+	"az":    "Azerbaijani",
+	"bg":    "Bulgarian",
+	"ca":    "Catalan",
+	"cz":    "Czech",
+	"da":    "Danish",
+	"de":    "German",
+	"el":    "Greek",
+	"en":    "English",
+	"eu":    "Basque",
+	"fa":    "Persian (Farsi)",
+	"fi":    "Finnish",
+	"fr":    "French",
+	"gl":    "Galician",
+	"he":    "Hebrew",
+	"hi":    "Hindi",
+	"hr":    "Croatian",
+	"hu":    "Hungarian",
+	"id":    "Indonesian",
+	"it":    "Italian",
+	"ja":    "Japanese",
+	"kr":    "Korean",
+	"la":    "Latvian",
+	"lt":    "Lithuanian",
+	"mk":    "Macedonian",
+	"no":    "Norwegian",
+	"nl":    "Dutch",
+	"pl":    "Polish",
+	"pt":    "Portuguese",
+	"pt_br": "Português Brasil",
+	"ro":    "Romanian",
+	"ru":    "Russian",
+	"sv":    "Swedish",
+	"se":    "Swedish",
+	"sk":    "Slovak",
+	"sl":    "Slovenian",
+	"sp":    "Spanish",
+	"es":    "Spanish",
+	"sr":    "Serbian",
+	"th":    "Thai",
+	"tr":    "Turkish",
+	"ua":    "Ukrainian",
+	"uk":    "Ukrainian",
+	"vi":    "Vietnamese",
+	"zh_cn": "Chinese Simplified",
+	"zh_tw": "Chinese Traditional",
+	"zu":    "Zulu",
+}
+
 const (
 	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
 )
@@ -88,15 +150,18 @@ type Sys struct {
 }
 
 func validMode(mode string) bool {
-	return mode != ""
+	_, ok := Modes[mode]
+	return ok
 }
 
 func validUnits(units string) bool {
-	return units != ""
+	_, ok := Units[units]
+	return ok
 }
 
 func validLang(lang string) bool {
-	return lang != ""
+	_, ok := LanguageCodes[lang]
+	return ok
 }
 
 func apiURL(config *Config, url string, params OptionParameters) string {
