@@ -5,17 +5,17 @@ import (
 	"strconv"
 )
 
-var Modes = map[string]string{
+var ModeList = map[string]string{
 	"xml":  "xml",
 	"html": "html",
 }
 
-var Units = map[string]string{
+var UnitsList = map[string]string{
 	"imperial": "Fahrenheit",
 	"metric":   "Celsius",
 }
 
-var LanguageCodes = map[string]string{
+var LanguageCodeList = map[string]string{
 	"af":    "Afrikaans",
 	"al":    "Albanian",
 	"ar":    "Arabic",
@@ -76,6 +76,36 @@ type Config struct {
 	Mode   string
 	Units  string
 	Lang   string
+}
+
+type Option func(*Config)
+
+func Mode(mode string) Option {
+	return func(c *Config) {
+		c.Mode = mode
+	}
+}
+
+func Units(units string) Option {
+	return func(c *Config) {
+		c.Units = units
+	}
+}
+
+func Lang(lang string) Option {
+	return func(c *Config) {
+		c.Lang = lang
+	}
+}
+
+func NewConfig(apiKey string, opts ...Option) *Config {
+	c := &Config{APIKey: apiKey}
+
+	for _, opt := range opts {
+		opt(c)
+	}
+
+	return c
 }
 
 func (c *Config) Valid() bool {
@@ -150,17 +180,17 @@ type Sys struct {
 }
 
 func validMode(mode string) bool {
-	_, ok := Modes[mode]
+	_, ok := ModeList[mode]
 	return ok
 }
 
 func validUnits(units string) bool {
-	_, ok := Units[units]
+	_, ok := UnitsList[units]
 	return ok
 }
 
 func validLang(lang string) bool {
-	_, ok := LanguageCodes[lang]
+	_, ok := LanguageCodeList[lang]
 	return ok
 }
 
