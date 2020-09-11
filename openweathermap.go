@@ -108,7 +108,7 @@ func NewConfig(apiKey string, opts ...Option) *Config {
 	return c
 }
 
-func (c *Config) Valid() bool {
+func (c *Config) Validate() bool {
 	return len(c.APIKey) > 0
 }
 
@@ -123,7 +123,7 @@ type Coordinates struct {
 	Lon degree `json:"lon"`
 }
 
-func (c *Coordinates) Valid() bool {
+func (c *Coordinates) Validate() bool {
 	if c.Lat < -90 && c.Lat > 90 {
 		return false
 	}
@@ -179,17 +179,17 @@ type Sys struct {
 	Sunset  int     `json:"sunset"`
 }
 
-func validMode(mode string) bool {
+func validateMode(mode string) bool {
 	_, ok := ModeList[mode]
 	return ok
 }
 
-func validUnits(units string) bool {
+func validateUnits(units string) bool {
 	_, ok := UnitsList[units]
 	return ok
 }
 
-func validLang(lang string) bool {
+func validateLang(lang string) bool {
 	_, ok := LanguageCodeList[lang]
 	return ok
 }
@@ -198,15 +198,15 @@ func apiURL(config *Config, url string, params OptionParameters) string {
 	values := params.urlValues()
 	values.Set("appid", config.APIKey)
 
-	if validMode(config.Mode) {
+	if validateMode(config.Mode) {
 		values.Set("mode", config.Mode)
 	}
 
-	if validUnits(config.Units) {
+	if validateUnits(config.Units) {
 		values.Set("units", config.Units)
 	}
 
-	if validLang(config.Lang) {
+	if validateLang(config.Lang) {
 		values.Set("lang", config.Lang)
 	}
 

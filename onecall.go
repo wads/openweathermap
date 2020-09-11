@@ -122,7 +122,7 @@ func (p OneCallApiParams) urlValues() url.Values {
 }
 
 func NewOneCallApi(config *Config) (*OneCallApi, error) {
-	if !config.Valid() {
+	if !config.Validate() {
 		return nil, errors.New("Invalid Config value")
 	}
 
@@ -134,7 +134,7 @@ func NewOneCallApi(config *Config) (*OneCallApi, error) {
 }
 
 func (a *OneCallApi) CurrentAndForecastByCoordinates(coord Coordinates) (*CurrentAndForecastWeather, error) {
-	if !coord.Valid() {
+	if !coord.Validate() {
 		return nil, errors.New("Invalid Coordinates value")
 	}
 	a.Params.Coord = &coord
