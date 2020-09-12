@@ -5,17 +5,17 @@ import (
 	"strconv"
 )
 
-var ModeList = map[string]string{
+var Mode = map[string]string{
 	"xml":  "xml",
 	"html": "html",
 }
 
-var UnitsList = map[string]string{
+var Units = map[string]string{
 	"imperial": "Fahrenheit",
 	"metric":   "Celsius",
 }
 
-var LanguageCodeList = map[string]string{
+var Lang = map[string]string{
 	"af":    "Afrikaans",
 	"al":    "Albanian",
 	"ar":    "Arabic",
@@ -80,19 +80,19 @@ type Config struct {
 
 type Option func(*Config)
 
-func Mode(mode string) Option {
+func ModeOption(mode string) Option {
 	return func(c *Config) {
 		c.Mode = mode
 	}
 }
 
-func Units(units string) Option {
+func UnitsOption(units string) Option {
 	return func(c *Config) {
 		c.Units = units
 	}
 }
 
-func Lang(lang string) Option {
+func LangOption(lang string) Option {
 	return func(c *Config) {
 		c.Lang = lang
 	}
@@ -130,7 +130,7 @@ func (c *Coordinates) Validate() bool {
 	return true
 }
 
-type OptionParameters interface {
+type Parameters interface {
 	urlValues() url.Values
 }
 
@@ -180,21 +180,21 @@ type Sys struct {
 }
 
 func validateMode(mode string) bool {
-	_, ok := ModeList[mode]
+	_, ok := Mode[mode]
 	return ok
 }
 
 func validateUnits(units string) bool {
-	_, ok := UnitsList[units]
+	_, ok := Units[units]
 	return ok
 }
 
 func validateLang(lang string) bool {
-	_, ok := LanguageCodeList[lang]
+	_, ok := Lang[lang]
 	return ok
 }
 
-func apiURL(config *Config, url string, params OptionParameters) string {
+func apiURL(config *Config, url string, params Parameters) string {
 	values := params.urlValues()
 	values.Set("appid", config.APIKey)
 
