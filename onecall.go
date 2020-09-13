@@ -5,12 +5,12 @@ import (
 	"net/url"
 )
 
-type OneCallApiParams struct {
+type OneCallParams struct {
 	Coord   *Coordinates
 	Exclude string
 }
 
-func (p OneCallApiParams) urlValues() url.Values {
+func (p OneCallParams) urlValues() url.Values {
 	values := url.Values{}
 
 	if p.Coord != nil {
@@ -25,30 +25,30 @@ func (p OneCallApiParams) urlValues() url.Values {
 	return values
 }
 
-type OneCallApi struct {
+type OneCall struct {
 	*OwmAPI
 }
 
-func NewOneCallApi(config *Config) (*OneCallApi, error) {
+func NewOneCall(config *Config) (*OneCall, error) {
 	if !ValidateConfig(config) {
 		return nil, errors.New("Invalid Config value")
 	}
 
-	return &OneCallApi{
+	return &OneCall{
 		&OwmAPI{
 			Config:   config,
 			Endpoint: oneCallURL,
-			Params:   OneCallApiParams{},
+			Params:   OneCallParams{},
 		},
 	}, nil
 }
 
-func (a *OneCallApi) CurrentAndForecastByCoordinates(coord Coordinates, exclude string) (*CurrentAndForecastWeather, error) {
+func (a *OneCall) CurrentAndForecastByCoordinates(coord Coordinates, exclude string) (*CurrentAndForecastWeather, error) {
 	if !coord.Validate() {
 		return nil, errors.New("Invalid Coordinates value")
 	}
 
-	a.Params = OneCallApiParams{Coord: &coord, Exclude: exclude}
+	a.Params = OneCallParams{Coord: &coord, Exclude: exclude}
 
 	weather := &CurrentAndForecastWeather{}
 	err := a.get(weather)
