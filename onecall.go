@@ -1,18 +1,9 @@
 package openweathermap
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 )
-
-type OneCallApi struct {
-	Config *Config
-	URL    string
-	Params OneCallApiParams
-}
 
 type OneCallApiParams struct {
 	Coord   *Coordinates
@@ -34,41 +25,32 @@ func (p OneCallApiParams) urlValues() url.Values {
 	return values
 }
 
+type OneCallApi struct {
+	*OwmAPI
+}
+
 func NewOneCallApi(config *Config) (*OneCallApi, error) {
-	if !validateConfig(config) {
+	if !ValidateConfig(config) {
 		return nil, errors.New("Invalid Config value")
 	}
 
 	return &OneCallApi{
-		Config: config,
-		URL:    oneCallURL,
-		Params: OneCallApiParams{},
+		&OwmAPI{
+			Config:   config,
+			Endpoint: oneCallURL,
+			Params:   OneCallApiParams{},
+		},
 	}, nil
 }
 
-func (a *OneCallApi) CurrentAndForecastByCoordinates(coord Coordinates) (*CurrentAndForecastWeather, error) {
+func (a *OneCallApi) CurrentAndForecastByCoordinates(coord Coordinates, exclude string) (*CurrentAndForecastWeather, error) {
 	if !coord.Validate() {
 		return nil, errors.New("Invalid Coordinates value")
 	}
-	a.Params.Coord = &coord
 
-	url := apiURL(a.Config, a.URL, a.Params)
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
+	a.Params = OneCallApiParams{Coord: &coord, Exclude: exclude}
 
-	body, err := ioutil.ReadAll(res.Body)
-	res.Body.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	response := CurrentAndForecastWeather{}
-	err = json.Unmarshal(body, &response)
-	if err != nil {
-		return nil, err
-	}
-
-	return &response, nil
+	weather := &CurrentAndForecastWeather{}
+	err := a.get(weather)
+	return weather, err
 }

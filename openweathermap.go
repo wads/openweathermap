@@ -1,6 +1,10 @@
 package openweathermap
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 )
 
@@ -107,44 +111,67 @@ func NewConfig(apiKey string, opts ...Option) *Config {
 	return c
 }
 
+type OwmAPI struct {
+	Config   *Config
+	Endpoint string
+	Params   Parameters
+}
+
+func (a *OwmAPI) apiURL() string {
+	config := a.Config
+	values := a.Params.urlValues()
+
+	values.Set("appid", config.APIKey)
+
+	if ValidateMode(config.Mode) {
+		values.Set("mode", config.Mode)
+	}
+
+	if ValidateUnits(config.Units) {
+		values.Set("units", config.Units)
+	}
+
+	if ValidateLang(config.Lang) {
+		values.Set("lang", config.Lang)
+	}
+
+	return fmt.Sprintf("%s?%s", a.Endpoint, values.Encode())
+}
+
+func (a *OwmAPI) get(dest interface{}) error {
+	res, err := http.Get(a.apiURL())
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(body, &dest)
+}
+
 type Parameters interface {
 	urlValues() url.Values
 }
 
-func validateConfig(c *Config) bool {
+func ValidateConfig(c *Config) bool {
 	return len(c.APIKey) > 0
 }
 
-func validateMode(mode string) bool {
+func ValidateMode(mode string) bool {
 	_, ok := Mode[mode]
 	return ok
 }
 
-func validateUnits(units string) bool {
+func ValidateUnits(units string) bool {
 	_, ok := Units[units]
 	return ok
 }
 
-func validateLang(lang string) bool {
+func ValidateLang(lang string) bool {
 	_, ok := Lang[lang]
 	return ok
-}
-
-func apiURL(config *Config, url string, params Parameters) string {
-	values := params.urlValues()
-	values.Set("appid", config.APIKey)
-
-	if validateMode(config.Mode) {
-		values.Set("mode", config.Mode)
-	}
-
-	if validateUnits(config.Units) {
-		values.Set("units", config.Units)
-	}
-
-	if validateLang(config.Lang) {
-		values.Set("lang", config.Lang)
-	}
-
-	return url + "?" + values.Encode()
 }
