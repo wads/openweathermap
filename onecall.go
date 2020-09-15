@@ -6,7 +6,7 @@ import (
 )
 
 type OneCallParams struct {
-	Coord   *Coordinates
+	Coord   *Coord
 	Exclude string
 }
 
@@ -43,9 +43,9 @@ func NewOneCall(config *Config) (*OneCall, error) {
 	}, nil
 }
 
-func (a *OneCall) CurrentAndForecastByCoordinates(coord Coordinates, exclude string) (*CurrentAndForecastWeather, error) {
+func (a *OneCall) CurrentAndForecastByCoord(coord Coord, exclude string) (*CurrentAndForecastWeather, error) {
 	if !coord.Validate() {
-		return nil, errors.New("Invalid Coordinates value")
+		return nil, errors.New("Invalid Coord value")
 	}
 
 	a.Params = OneCallParams{Coord: &coord, Exclude: exclude}

@@ -12,10 +12,10 @@ type OpenWeatherMapCity struct {
 }
 
 type City struct {
-	Id      int         `json:"id"`
-	Name    string      `json:"name"`
-	Country string      `json:"country"`
-	Coord   Coordinates `json:"coord"`
+	Id      int    `json:"id"`
+	Name    string `json:"name"`
+	Country string `json:"country"`
+	Coord   Coord  `json:"coord"`
 }
 
 const cityListURL = "http://bulk.openweathermap.org/sample/city.list.json.gz"

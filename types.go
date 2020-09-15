@@ -8,12 +8,12 @@ func (d degree) String() string {
 	return strconv.FormatFloat(float64(d), 'f', -1, 64)
 }
 
-type Coordinates struct {
+type Coord struct {
 	Lat degree `json:"lat"`
 	Lon degree `json:"lon"`
 }
 
-func (c *Coordinates) Validate() bool {
+func (c *Coord) Validate() bool {
 	if c.Lat < -90 && c.Lat > 90 {
 		return false
 	}

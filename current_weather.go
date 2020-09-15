@@ -12,20 +12,20 @@ var endpoint = "https://api.openweathermap.org/data/2.5/weather"
 var unit = "metric"
 
 type CurrentWeather struct {
-	Coord    Coordinates `json:"coord"`
-	Weather  []Weather   `json:"weather"`
-	Base     string      `json:"base"`
-	Main     Main        `json:"main"`
-	Wind     Wind        `json:"wind"`
-	Clouds   Clouds      `json:"clouds"`
-	Rain     Rain        `json:"rain"`
-	Snow     Snow        `json:"snow"`
-	Dt       int         `json:"dt"`
-	Sys      Sys         `json:"sys"`
-	Timezone int         `json:"timezone"`
-	ID       int         `json:"id"`
-	Name     string      `json:"name"`
-	Cod      int         `json:"cod"`
+	Coord    Coord     `json:"coord"`
+	Weather  []Weather `json:"weather"`
+	Base     string    `json:"base"`
+	Main     Main      `json:"main"`
+	Wind     Wind      `json:"wind"`
+	Clouds   Clouds    `json:"clouds"`
+	Rain     Rain      `json:"rain"`
+	Snow     Snow      `json:"snow"`
+	Dt       int       `json:"dt"`
+	Sys      Sys       `json:"sys"`
+	Timezone int       `json:"timezone"`
+	ID       int       `json:"id"`
+	Name     string    `json:"name"`
+	Cod      int       `json:"cod"`
 	Unit     string
 	Apikey   string
 }
