@@ -81,27 +81,27 @@ type Config struct {
 	Lang   string
 }
 
-type Option func(*Config)
+type ConfigOption func(*Config)
 
-func ModeOption(mode string) Option {
+func ModeOption(mode string) ConfigOption {
 	return func(c *Config) {
 		c.Mode = mode
 	}
 }
 
-func UnitsOption(units string) Option {
+func UnitsOption(units string) ConfigOption {
 	return func(c *Config) {
 		c.Units = units
 	}
 }
 
-func LangOption(lang string) Option {
+func LangOption(lang string) ConfigOption {
 	return func(c *Config) {
 		c.Lang = lang
 	}
 }
 
-func NewConfig(apiKey string, opts ...Option) *Config {
+func NewConfig(apiKey string, opts ...ConfigOption) *Config {
 	c := &Config{APIKey: apiKey}
 
 	for _, opt := range opts {
@@ -118,9 +118,9 @@ type OwmAPI struct {
 }
 
 func (a *OwmAPI) apiURL() string {
-	config := a.Config
 	values := a.Params.urlValues()
 
+	config := a.Config
 	values.Set("appid", config.APIKey)
 
 	if ValidateMode(config.Mode) {
