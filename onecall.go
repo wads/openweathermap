@@ -51,7 +51,7 @@ func NewOneCall(config *Config) (*OneCall, error) {
 }
 
 func (o *OneCall) CurrentAndForecastByCoord(coord Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
-	if !coord.Validate() {
+	if !ValidateCoord(coord) {
 		return nil, errors.New("Invalid Coord value")
 	}
 	params := &oneCallParams{coord: &coord}
