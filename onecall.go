@@ -6,23 +6,31 @@ import (
 )
 
 type OneCallParams struct {
-	Coord   *Coord
-	Exclude string
+	coord   *Coord
+	exclude string
 }
 
-func (p OneCallParams) urlValues() url.Values {
+func (o OneCallParams) urlValues() url.Values {
 	values := url.Values{}
 
-	if p.Coord != nil {
-		values.Set("lat", p.Coord.Lat.String())
-		values.Set("lon", p.Coord.Lon.String())
+	if o.coord != nil {
+		values.Set("lat", o.coord.Lat.String())
+		values.Set("lon", o.coord.Lon.String())
 	}
 
-	if len(p.Exclude) > 0 {
-		values.Set("exclude", p.Exclude)
+	if len(o.exclude) > 0 {
+		values.Set("exclude", o.exclude)
 	}
 
 	return values
+}
+
+type OneCallOption func(*OneCallParams)
+
+func ExcludeOption(exclude string) OneCallOption {
+	return func(o *OneCallParams) {
+		o.exclude = exclude
+	}
 }
 
 type OneCall struct {
@@ -43,14 +51,20 @@ func NewOneCall(config *Config) (*OneCall, error) {
 	}, nil
 }
 
-func (a *OneCall) CurrentAndForecastByCoord(coord Coord, exclude string) (*CurrentAndForecastWeather, error) {
+func (o *OneCall) CurrentAndForecastByCoord(coord Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
 	if !coord.Validate() {
 		return nil, errors.New("Invalid Coord value")
 	}
+	params := &OneCallParams{coord: &coord}
 
-	a.Params = OneCallParams{Coord: &coord, Exclude: exclude}
+	for _, opt := range opts {
+		opt(params)
+	}
+
+	o.Params = params
 
 	weather := &CurrentAndForecastWeather{}
-	err := a.get(weather)
+	err := o.get(weather)
+
 	return weather, err
 }
