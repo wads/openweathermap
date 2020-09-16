@@ -46,7 +46,6 @@ func NewOneCall(config *Config) (*OneCall, error) {
 		&OwmAPI{
 			Config:   config,
 			Endpoint: oneCallURL,
-			Params:   oneCallParams{},
 		},
 	}, nil
 }

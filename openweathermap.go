@@ -118,7 +118,12 @@ type OwmAPI struct {
 }
 
 func (a *OwmAPI) apiURL() string {
-	values := a.Params.urlValues()
+	var values url.Values
+	if a.Params != nil {
+		values = a.Params.urlValues()
+	} else {
+		values = url.Values{}
+	}
 
 	config := a.Config
 	values.Set("appid", config.APIKey)
