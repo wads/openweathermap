@@ -5,12 +5,12 @@ import (
 	"net/url"
 )
 
-type OneCallParams struct {
+type oneCallParams struct {
 	coord   *Coord
 	exclude string
 }
 
-func (o OneCallParams) urlValues() url.Values {
+func (o oneCallParams) urlValues() url.Values {
 	values := url.Values{}
 
 	if o.coord != nil {
@@ -25,10 +25,10 @@ func (o OneCallParams) urlValues() url.Values {
 	return values
 }
 
-type OneCallOption func(*OneCallParams)
+type OneCallOption func(*oneCallParams)
 
 func ExcludeOption(exclude string) OneCallOption {
-	return func(o *OneCallParams) {
+	return func(o *oneCallParams) {
 		o.exclude = exclude
 	}
 }
@@ -46,7 +46,7 @@ func NewOneCall(config *Config) (*OneCall, error) {
 		&OwmAPI{
 			Config:   config,
 			Endpoint: oneCallURL,
-			Params:   OneCallParams{},
+			Params:   oneCallParams{},
 		},
 	}, nil
 }
@@ -55,7 +55,7 @@ func (o *OneCall) CurrentAndForecastByCoord(coord Coord, opts ...OneCallOption) 
 	if !coord.Validate() {
 		return nil, errors.New("Invalid Coord value")
 	}
-	params := &OneCallParams{coord: &coord}
+	params := &oneCallParams{coord: &coord}
 
 	for _, opt := range opts {
 		opt(params)
