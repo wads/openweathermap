@@ -33,16 +33,16 @@ func ExcludeOption(exclude string) OneCallOption {
 	}
 }
 
-type OneCall struct {
+type OneCallAPI struct {
 	*OwmAPI
 }
 
-func NewOneCall(config *Config) (*OneCall, error) {
+func NewOneCallAPI(config *Config) (*OneCallAPI, error) {
 	if !ValidateConfig(config) {
 		return nil, errors.New("Invalid Config value")
 	}
 
-	return &OneCall{
+	return &OneCallAPI{
 		&OwmAPI{
 			Config:   config,
 			Endpoint: oneCallURL,
@@ -50,7 +50,7 @@ func NewOneCall(config *Config) (*OneCall, error) {
 	}, nil
 }
 
-func (o *OneCall) CurrentAndForecastByCoord(coord Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
+func (o *OneCallAPI) CurrentAndForecast(coord Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
 	if !ValidateCoord(coord) {
 		return nil, errors.New("Invalid Coord value")
 	}
