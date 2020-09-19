@@ -156,3 +156,20 @@ type Temp struct {
 type FeelsLike struct {
 	TimeOfDay
 }
+
+type CurrentWeather struct {
+	Coord    Coord     `json:"coord"`
+	Weather  []Weather `json:"weather"`
+	Base     string    `json:"base"`
+	Main     Main      `json:"main"`
+	Wind     Wind      `json:"wind"`
+	Clouds   Clouds    `json:"clouds"`
+	Rain     Rain      `json:"rain"`
+	Snow     Snow      `json:"snow"`
+	Dt       int       `json:"dt"`
+	Sys      Sys       `json:"sys"`
+	Timezone int       `json:"timezone"`
+	ID       int       `json:"id"`
+	Name     string    `json:"name"`
+	Cod      int       `json:"cod"`
+}

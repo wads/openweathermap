@@ -1,59 +1,78 @@
 package openweathermap
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"strings"
+	"errors"
+	"net/url"
 )
 
-var endpoint = "https://api.openweathermap.org/data/2.5/weather"
-var unit = "metric"
-
-type CurrentWeather struct {
-	Coord    Coord     `json:"coord"`
-	Weather  []Weather `json:"weather"`
-	Base     string    `json:"base"`
-	Main     Main      `json:"main"`
-	Wind     Wind      `json:"wind"`
-	Clouds   Clouds    `json:"clouds"`
-	Rain     Rain      `json:"rain"`
-	Snow     Snow      `json:"snow"`
-	Dt       int       `json:"dt"`
-	Sys      Sys       `json:"sys"`
-	Timezone int       `json:"timezone"`
-	ID       int       `json:"id"`
-	Name     string    `json:"name"`
-	Cod      int       `json:"cod"`
-	Unit     string
-	Apikey   string
+type currentParams struct {
+	name    string
+	state   string
+	country string
 }
 
-func NewCurrentWeather(apikey, unit string) *CurrentWeather {
-	return &CurrentWeather{Unit: unit, Apikey: apikey}
+func (c currentParams) urlValues() url.Values {
+	values := url.Values{}
+
+	if len(c.name) > 0 {
+		name := c.name
+
+		if len(c.state) > 0 {
+			name += "," + c.state
+		}
+
+		if len(c.country) > 0 {
+			name += "," + c.country
+		}
+
+		values.Set("q", name)
+	}
+
+	return values
 }
 
-func (w *CurrentWeather) CurrentByCityID(cityID string) error {
-	params := []string{
-		"appid=" + w.Apikey,
-		"id=" + cityID,
-		"units=" + w.Unit,
+type CurrentOption func(*currentParams)
+
+func StateOption(state string) CurrentOption {
+	return func(c *currentParams) {
+		c.state = state
+	}
+}
+
+func CountryOption(country string) CurrentOption {
+	return func(c *currentParams) {
+		c.country = country
+	}
+}
+
+type CurrentAPI struct {
+	*OwmAPI
+}
+
+func NewCurrentAPI(config *Config) (*CurrentAPI, error) {
+	if !ValidateConfig(config) {
+		return nil, errors.New("Invalid Config value")
 	}
 
-	url := fmt.Sprintf("%s?%s", endpoint, strings.Join(params, "&"))
-	res, err := http.Get(url)
-	if err != nil {
-		return err
+	return &CurrentAPI{
+		&OwmAPI{
+			Config:   config,
+			Endpoint: currentURL,
+		},
+	}, nil
+}
+
+func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*CurrentWeather, error) {
+	params := &currentParams{name: name}
+
+	for _, opt := range opts {
+		opt(params)
 	}
-	body, err := ioutil.ReadAll(res.Body)
-	res.Body.Close()
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &w)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	c.Params = params
+
+	weather := &CurrentWeather{}
+	err := c.get(weather)
+
+	return weather, err
 }

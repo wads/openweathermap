@@ -71,6 +71,7 @@ var Lang = map[string]string{
 }
 
 const (
+	currentURL = "https://api.openweathermap.org/data/2.5/weather"
 	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
 )
 
