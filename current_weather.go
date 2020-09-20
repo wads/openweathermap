@@ -6,16 +6,16 @@ import (
 )
 
 type currentParams struct {
-	name    string
-	state   string
-	country string
+	cityName string
+	state    string
+	country  string
 }
 
 func (c currentParams) urlValues() url.Values {
 	values := url.Values{}
 
-	if len(c.name) > 0 {
-		name := c.name
+	if len(c.cityName) > 0 {
+		name := c.cityName
 
 		if len(c.state) > 0 {
 			name += "," + c.state
@@ -63,7 +63,7 @@ func NewCurrentAPI(config *Config) (*CurrentAPI, error) {
 }
 
 func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*CurrentWeather, error) {
-	params := &currentParams{name: name}
+	params := &currentParams{cityName: name}
 
 	for _, opt := range opts {
 		opt(params)
