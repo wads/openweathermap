@@ -6,6 +6,7 @@ import (
 )
 
 type currentParams struct {
+	cityID   string
 	cityName string
 	state    string
 	country  string
@@ -26,6 +27,10 @@ func (c currentParams) urlValues() url.Values {
 		}
 
 		values.Set("q", name)
+	}
+
+	if len(c.cityID) > 0 {
+		values.Set("id", c.cityID)
 	}
 
 	return values
@@ -68,6 +73,17 @@ func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*Cur
 	for _, opt := range opts {
 		opt(params)
 	}
+
+	c.Params = params
+
+	weather := &CurrentWeather{}
+	err := c.get(weather)
+
+	return weather, err
+}
+
+func (c *CurrentAPI) CurrentByCityID(id string) (*CurrentWeather, error) {
+	params := &currentParams{cityID: id}
 
 	c.Params = params
 
