@@ -50,11 +50,11 @@ func NewOneCallAPI(config *Config) (*OneCallAPI, error) {
 	}, nil
 }
 
-func (o *OneCallAPI) CurrentAndForecast(coord Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
+func (o *OneCallAPI) CurrentAndForecast(coord *Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
 	if !ValidateCoord(coord) {
 		return nil, errors.New("Invalid Coord value")
 	}
-	params := &oneCallParams{coord: &coord}
+	params := &oneCallParams{coord: coord}
 
 	for _, opt := range opts {
 		opt(params)

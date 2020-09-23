@@ -13,7 +13,7 @@ type Coord struct {
 	Lon degree `json:"lon"`
 }
 
-func ValidateCoord(coord Coord) bool {
+func ValidateCoord(coord *Coord) bool {
 	if coord.Lat < -90 && coord.Lat > 90 {
 		return false
 	}
