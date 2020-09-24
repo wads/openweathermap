@@ -75,6 +75,15 @@ const (
 	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
 )
 
+type APICallError struct {
+	COD     string `json:"cod"`
+	Message string `json:"message"`
+}
+
+func (a APICallError) Error() string {
+	return fmt.Sprintf("%s, (cod=%s)", a.Message, a.COD)
+}
+
 type Config struct {
 	APIKey string
 	Mode   string
@@ -156,7 +165,20 @@ func (a *OwmAPI) get(dest interface{}) error {
 		return err
 	}
 
+	if res.StatusCode != 200 {
+		return handleAPICallError(body)
+	}
+
 	return json.Unmarshal(body, &dest)
+}
+
+func handleAPICallError(respBody []byte) error {
+	apiCallError := APICallError{}
+	err := json.Unmarshal(respBody, &apiCallError)
+	if err != nil {
+		return err
+	}
+	return apiCallError
 }
 
 type Parameters interface {
