@@ -14,8 +14,9 @@ var Mode = map[string]string{
 }
 
 var Units = map[string]string{
-	"imperial": "Fahrenheit",
-	"metric":   "Celsius",
+	"imperial": "Temperature in Fahrenheit and wind speed in miles/hour",
+	"metric":   "Temperature in Celsius and wind speed in meter/sec",
+	"standard": "Temperature in Kelvin and wind speed in meter/sec",
 }
 
 var Lang = map[string]string{
