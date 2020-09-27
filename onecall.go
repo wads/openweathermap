@@ -5,31 +5,11 @@ import (
 	"net/url"
 )
 
-type oneCallParams struct {
-	coord   *Coord
-	exclude string
-}
-
-func (o oneCallParams) urlValues() url.Values {
-	values := url.Values{}
-
-	if o.coord != nil {
-		values.Set("lat", o.coord.Lat.String())
-		values.Set("lon", o.coord.Lon.String())
-	}
-
-	if len(o.exclude) > 0 {
-		values.Set("exclude", o.exclude)
-	}
-
-	return values
-}
-
-type OneCallOption func(*oneCallParams)
+type OneCallOption func(url.Values)
 
 func ExcludeOption(exclude string) OneCallOption {
-	return func(o *oneCallParams) {
-		o.exclude = exclude
+	return func(v url.Values) {
+		v.Set("exclude", exclude)
 	}
 }
 
@@ -42,25 +22,20 @@ func NewOneCallAPI(config *Config) (*OneCallAPI, error) {
 		return nil, errors.New("Invalid Config value")
 	}
 
-	return &OneCallAPI{
-		&OwmAPI{
-			Config:   config,
-			Endpoint: oneCallURL,
-		},
-	}, nil
+	return &OneCallAPI{NewOwmAPI(config, oneCallURL)}, nil
 }
 
 func (o *OneCallAPI) CurrentAndForecast(coord *Coord, opts ...OneCallOption) (*CurrentAndForecastWeather, error) {
 	if !ValidateCoord(coord) {
 		return nil, errors.New("Invalid Coord value")
 	}
-	params := &oneCallParams{coord: coord}
+
+	o.Params.Set("lat", coord.Lat.String())
+	o.Params.Set("lon", coord.Lon.String())
 
 	for _, opt := range opts {
-		opt(params)
+		opt(o.Params)
 	}
-
-	o.Params = params
 
 	weather := &CurrentAndForecastWeather{}
 	err := o.get(weather)

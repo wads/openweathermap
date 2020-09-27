@@ -5,48 +5,6 @@ import (
 	"net/url"
 )
 
-type currentParams struct {
-	cityID   string
-	cityName string
-	state    string
-	country  string
-	coord    *Coord
-	zipCode  string
-}
-
-func (c currentParams) urlValues() url.Values {
-	values := url.Values{}
-
-	if len(c.cityName) > 0 {
-		name := c.cityName
-
-		if len(c.state) > 0 {
-			name += "," + c.state
-		}
-
-		if len(c.country) > 0 {
-			name += "," + c.country
-		}
-
-		values.Set("q", name)
-	}
-
-	if len(c.cityID) > 0 {
-		values.Set("id", c.cityID)
-	}
-
-	if c.coord != nil {
-		values.Set("lat", c.coord.Lat.String())
-		values.Set("lon", c.coord.Lon.String())
-	}
-
-	if len(c.zipCode) > 0 {
-		values.Set("zip", c.zipCode)
-	}
-
-	return values
-}
-
 type CurrentOption func(*currentParams)
 
 func StateOption(state string) CurrentOption {
@@ -70,22 +28,43 @@ func NewCurrentAPI(config *Config) (*CurrentAPI, error) {
 		return nil, errors.New("Invalid Config value")
 	}
 
-	return &CurrentAPI{
-		&OwmAPI{
-			Config:   config,
-			Endpoint: currentURL,
-		},
-	}, nil
+	return &CurrentAPI{NewOwmAPI(config, currentURL)}, nil
+}
+
+type currentParams struct {
+	country string
+	name    string
+	state   string
+}
+
+func (c currentParams) urlValues() url.Values {
+	values := url.Values{}
+
+	if len(c.name) > 0 {
+		name := c.name
+
+		if len(c.state) > 0 {
+			name += "," + c.state
+		}
+
+		if len(c.country) > 0 {
+			name += "," + c.country
+		}
+
+		values.Set("q", name)
+	}
+
+	return values
 }
 
 func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*CurrentWeather, error) {
-	params := &currentParams{cityName: name}
+	params := &currentParams{name: name}
 
 	for _, opt := range opts {
 		opt(params)
 	}
 
-	c.Params = params
+	c.Params = params.urlValues()
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)
@@ -94,9 +73,7 @@ func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*Cur
 }
 
 func (c *CurrentAPI) CurrentByCityID(id string) (*CurrentWeather, error) {
-	params := &currentParams{cityID: id}
-
-	c.Params = params
+	c.Params.Set("id", id)
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)
@@ -105,9 +82,12 @@ func (c *CurrentAPI) CurrentByCityID(id string) (*CurrentWeather, error) {
 }
 
 func (c *CurrentAPI) CurrentByCoord(coord *Coord) (*CurrentWeather, error) {
-	params := &currentParams{coord: coord}
+	if !ValidateCoord(coord) {
+		return nil, errors.New("Invalid Coord value")
+	}
 
-	c.Params = params
+	c.Params.Set("lat", coord.Lat.String())
+	c.Params.Set("lon", coord.Lon.String())
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)
@@ -116,9 +96,7 @@ func (c *CurrentAPI) CurrentByCoord(coord *Coord) (*CurrentWeather, error) {
 }
 
 func (c *CurrentAPI) CurrentByZIPCode(zipCode string) (*CurrentWeather, error) {
-	params := &currentParams{zipCode: zipCode}
-
-	c.Params = params
+	c.Params.Set("zip", zipCode)
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)

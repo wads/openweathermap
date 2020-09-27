@@ -125,33 +125,39 @@ func NewConfig(apiKey string, opts ...ConfigOption) *Config {
 type OwmAPI struct {
 	Config   *Config
 	Endpoint string
-	Params   Parameters
+	Params   url.Values
+}
+
+func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
+	api := &OwmAPI{Config: config, Endpoint: endpoint}
+	api.resetParams()
+
+	return api
+}
+
+func (a *OwmAPI) resetParams() {
+	a.Params = url.Values{}
 }
 
 func (a *OwmAPI) apiURL() string {
-	var values url.Values
-	if a.Params != nil {
-		values = a.Params.urlValues()
-	} else {
-		values = url.Values{}
+	a.Params.Set("appid", a.Config.APIKey)
+
+	if ValidateMode(a.Config.Mode) {
+		a.Params.Set("mode", a.Config.Mode)
 	}
 
-	config := a.Config
-	values.Set("appid", config.APIKey)
-
-	if ValidateMode(config.Mode) {
-		values.Set("mode", config.Mode)
+	if ValidateUnits(a.Config.Units) {
+		a.Params.Set("units", a.Config.Units)
 	}
 
-	if ValidateUnits(config.Units) {
-		values.Set("units", config.Units)
+	if ValidateLang(a.Config.Lang) {
+		a.Params.Set("lang", a.Config.Lang)
 	}
 
-	if ValidateLang(config.Lang) {
-		values.Set("lang", config.Lang)
-	}
+	query := a.Params.Encode()
+	a.resetParams()
 
-	return fmt.Sprintf("%s?%s", a.Endpoint, values.Encode())
+	return fmt.Sprintf("%s?%s", a.Endpoint, query)
 }
 
 func (a *OwmAPI) get(dest interface{}) error {
@@ -180,10 +186,6 @@ func handleAPICallError(respBody []byte) error {
 		return err
 	}
 	return apiCallError
-}
-
-type Parameters interface {
-	urlValues() url.Values
 }
 
 func ValidateConfig(c *Config) bool {
