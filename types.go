@@ -1,6 +1,10 @@
 package openweathermap
 
-import "strconv"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
 
 type degree float64
 
@@ -25,6 +29,38 @@ func ValidateCoord(coord *Coord) bool {
 	return true
 }
 
+type BoundingBox struct {
+	LatTop    degree
+	LatBottom degree
+	LonLeft   degree
+	LonRight  degree
+	Zoom      int
+}
+
+func (b *BoundingBox) String() string {
+	return fmt.Sprintf("%f,%f,%f,%f,%d", b.LonLeft, b.LatBottom, b.LonRight, b.LatTop, b.Zoom)
+}
+
+func ValidateBoundingBox(bbox *BoundingBox) bool {
+	if bbox.LatTop < -90 && bbox.LatTop > 90 {
+		return false
+	}
+
+	if bbox.LatBottom < -90 && bbox.LatBottom > 90 {
+		return false
+	}
+
+	if bbox.LonLeft < -180 && bbox.LonLeft > 180 {
+		return false
+	}
+
+	if bbox.LonRight < -180 && bbox.LonRight > 180 {
+		return false
+	}
+
+	return true
+}
+
 type Weather struct {
 	ID          int    `json:"id"`
 	Main        string `json:"main"`
@@ -33,48 +69,49 @@ type Weather struct {
 }
 
 type Main struct {
-	Temp      float64 `json:"temp"`
+	Temp      float32 `json:"temp"`
 	Pressure  int     `json:"pressure"`
 	Humidity  int     `json:"humidity"`
-	TempMin   float64 `json:"temp_min"`
-	TempMax   float64 `json:"temp_max"`
-	SeaLevel  float64 `json:"sea_level"`
-	GrndLevel float64 `json:"grnd_level"`
+	TempMin   float32 `json:"temp_min"`
+	TempMax   float32 `json:"temp_max"`
+	SeaLevel  float32 `json:"sea_level"`
+	GrndLevel float32 `json:"grnd_level"`
 }
 
 type Wind struct {
-	Speed float64 `json:"speed"`
+	Speed float32 `json:"speed"`
 	Deg   int     `json:"deg"`
 }
 
 type Clouds struct {
-	All int `json:"all"`
+	All   int `json:"all"`
+	Today int `json:"today"`
 }
 
 type Rain struct {
-	OneH   float64 `json:"1h"`
-	ThreeH float64 `json:"3h"`
+	OneH   float32 `json:"1h"`
+	ThreeH float32 `json:"3h"`
 }
 
 type Snow struct {
-	OneH   float64 `json:"1h"`
-	ThreeH float64 `json:"3h"`
+	OneH   float32 `json:"1h"`
+	ThreeH float32 `json:"3h"`
 }
 
 type Sys struct {
 	Type    int     `json:"type"`
 	ID      int     `json:"id"`
-	Message float64 `json:"message"`
+	Message float32 `json:"message"`
 	Country string  `json:"country"`
 	Sunrise int     `json:"sunrise"`
 	Sunset  int     `json:"sunset"`
 }
 
 type CurrentAndForecastWeather struct {
-	Lat            float64    `json:"lat"`
-	Lon            float64    `json:"lon"`
+	Lat            float32    `json:"lat"`
+	Lon            float32    `json:"lon"`
 	Timezone       string     `json:"timezone"`
-	TimezoneOffset int64      `json:"timezone_offset"`
+	TimezoneOffset int        `json:"timezone_offset"`
 	Current        Current    `json:"current"`
 	Minutely       []Minutely `json:"minutely"`
 	Hourly         []Hourly   `json:"hourly"`
@@ -82,75 +119,75 @@ type CurrentAndForecastWeather struct {
 }
 
 type Current struct {
-	Dt         int64     `json:"dt"`
-	Sunrise    int64     `json:"sunrise"`
-	Sunset     int64     `json:"sunset"`
-	Temp       float64   `json:"temp"`
-	FeelsLike  float64   `json:"feels_like"`
-	Pressure   int64     `json:"pressure"`
-	Humidity   int64     `json:"humidity"`
-	DewPoint   float64   `json:"dew_point"`
-	Clouds     int64     `json:"clouds"`
-	Uvi        float64   `json:"uvi"`
-	Visibility int64     `json:"visibility"`
-	WindSpeed  float64   `json:"wind_speed"`
-	WindGust   float64   `json:"wind_gust"`
-	WindDeg    int64     `json:"wind_deg"`
+	Dt         int       `json:"dt"`
+	Sunrise    int       `json:"sunrise"`
+	Sunset     int       `json:"sunset"`
+	Temp       float32   `json:"temp"`
+	FeelsLike  float32   `json:"feels_like"`
+	Pressure   int       `json:"pressure"`
+	Humidity   int       `json:"humidity"`
+	DewPoint   float32   `json:"dew_point"`
+	Clouds     int       `json:"clouds"`
+	Uvi        float32   `json:"uvi"`
+	Visibility int       `json:"visibility"`
+	WindSpeed  float32   `json:"wind_speed"`
+	WindGust   float32   `json:"wind_gust"`
+	WindDeg    int       `json:"wind_deg"`
 	Rain       Rain      `json:"rain"`
 	Snow       Snow      `json:"snow"`
 	Weather    []Weather `json:"weather"`
 }
 
 type Minutely struct {
-	Dt            int64   `json:"dt"`
-	Precipitation float64 `json:"precipitation"`
+	Dt            int     `json:"dt"`
+	Precipitation float32 `json:"precipitation"`
 }
 
 type Hourly struct {
-	Dt         int64     `json:"dt"`
-	Temp       float64   `json:"temp"`
-	FeelsLike  float64   `json:"feels_like"`
-	Pressure   int64     `json:"pressure"`
-	Humidity   int64     `json:"humidity"`
-	DewPoint   float64   `json:"dew_point"`
-	Clouds     int64     `json:"clouds"`
-	Visibility int64     `json:"visibility"`
-	WindSpeed  float64   `json:"wind_speed"`
-	WindGust   float64   `json:"wind_gust"`
-	WindDeg    int64     `json:"wind_deg"`
+	Dt         int       `json:"dt"`
+	Temp       float32   `json:"temp"`
+	FeelsLike  float32   `json:"feels_like"`
+	Pressure   int       `json:"pressure"`
+	Humidity   int       `json:"humidity"`
+	DewPoint   float32   `json:"dew_point"`
+	Clouds     int       `json:"clouds"`
+	Visibility int       `json:"visibility"`
+	WindSpeed  float32   `json:"wind_speed"`
+	WindGust   float32   `json:"wind_gust"`
+	WindDeg    int       `json:"wind_deg"`
 	Rain       Rain      `json:"rain"`
 	Snow       Snow      `json:"snow"`
 	Weather    []Weather `json:"weather"`
 }
 
 type Daily struct {
-	Dt         int64     `json:"dt"`
+	Dt         int       `json:"dt"`
 	Temp       Temp      `json:"temp"`
 	FeelsLike  FeelsLike `json:"feels_like"`
-	Pressure   int64     `json:"pressure"`
-	Humidity   int64     `json:"humidity"`
-	DewPoint   float64   `json:"dew_point"`
-	Clouds     int64     `json:"clouds"`
-	Visibility int64     `json:"visibility"`
-	WindSpeed  float64   `json:"wind_speed"`
-	WindGust   float64   `json:"wind_gust"`
-	WindDeg    int64     `json:"wind_deg"`
-	Rain       float64   `json:"rain"`
+	Pressure   int       `json:"pressure"`
+	Humidity   int       `json:"humidity"`
+	DewPoint   float32   `json:"dew_point"`
+	Clouds     int       `json:"clouds"`
+	Visibility int       `json:"visibility"`
+	WindSpeed  float32   `json:"wind_speed"`
+	WindGust   float32   `json:"wind_gust"`
+	WindDeg    int       `json:"wind_deg"`
+	Rain       float32   `json:"rain"`
 	Snow       Snow      `json:"snow"`
 	Weather    []Weather `json:"weather"`
 }
 
 type TimeOfDay struct {
-	Morn  float64 `json:"morn"`
-	Day   float64 `json:"day"`
-	Eve   float64 `json:"eve"`
-	Night float64 `json:"night"`
+	Morn  float32 `json:"morn"`
+	Day   float32 `json:"day"`
+	Eve   float32 `json:"eve"`
+	Night float32 `json:"night"`
 }
 
 type Temp struct {
 	TimeOfDay
-	Min float64 `json:"min"`
-	Max float64 `json:"max"`
+	Min float32 `json:"min"`
+	Max float32 `json:"max"`
 }
 
 type FeelsLike struct {
@@ -158,18 +195,50 @@ type FeelsLike struct {
 }
 
 type CurrentWeather struct {
-	Coord    Coord     `json:"coord"`
-	Weather  []Weather `json:"weather"`
-	Base     string    `json:"base"`
-	Main     Main      `json:"main"`
-	Wind     Wind      `json:"wind"`
-	Clouds   Clouds    `json:"clouds"`
-	Rain     Rain      `json:"rain"`
-	Snow     Snow      `json:"snow"`
-	Dt       int       `json:"dt"`
-	Sys      Sys       `json:"sys"`
-	Timezone int       `json:"timezone"`
-	ID       int       `json:"id"`
-	Name     string    `json:"name"`
-	Cod      int       `json:"cod"`
+	Coord      Coord     `json:"coord"`
+	Weather    []Weather `json:"weather"`
+	Base       string    `json:"base"`
+	Main       Main      `json:"main"`
+	Visibility int       `json:"visibility"`
+	Wind       Wind      `json:"wind"`
+	Clouds     Clouds    `json:"clouds"`
+	Rain       Rain      `json:"rain"`
+	Snow       Snow      `json:"snow"`
+	Dt         int       `json:"dt"`
+	Sys        Sys       `json:"sys"`
+	Timezone   int       `json:"timezone"`
+	ID         int       `json:"id"`
+	Name       string    `json:"name"`
+	Cod        int       `json:"cod"`
+}
+
+type CurrentCitiesWeather struct {
+	Cod      int
+	Calctime float32
+	Cnt      int
+	List     []CurrentWeather
+}
+
+func (c *CurrentCitiesWeather) UnmarshalJSON(data []byte) error {
+	type Alias CurrentCitiesWeather
+	a := &struct {
+		Cod json.RawMessage
+		*Alias
+	}{
+		Alias: (*Alias)(c),
+	}
+	if err := json.Unmarshal(data, &a); err != nil {
+		return err
+	}
+
+	var cod string
+	if err := json.Unmarshal(a.Cod, &cod); err == nil {
+		i, err := strconv.Atoi(cod)
+		if err != nil {
+			return err
+		}
+		c.Cod = i
+	}
+
+	return nil
 }

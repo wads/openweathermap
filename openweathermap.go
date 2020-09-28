@@ -73,6 +73,9 @@ var Lang = map[string]string{
 
 const (
 	currentURL = "https://api.openweathermap.org/data/2.5/weather"
+	boxCityURL = "https://api.openweathermap.org/data/2.5/box/city"
+	findURL    = "https://api.openweathermap.org/data/2.5/find"
+	groupURL   = "https://api.openweathermap.org/data/2.5/group"
 	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
 )
 
@@ -122,10 +125,14 @@ func NewConfig(apiKey string, opts ...ConfigOption) *Config {
 	return c
 }
 
+type Params interface {
+	urlValues() url.Values
+}
+
 type OwmAPI struct {
 	Config   *Config
 	Endpoint string
-	Params   url.Values
+	Params   Params
 }
 
 func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
@@ -136,25 +143,32 @@ func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
 }
 
 func (a *OwmAPI) resetParams() {
-	a.Params = url.Values{}
+	a.Params = nil
 }
 
 func (a *OwmAPI) apiURL() string {
-	a.Params.Set("appid", a.Config.APIKey)
+	var values url.Values
+	if a.Params != nil {
+		values = a.Params.urlValues()
+	} else {
+		values = url.Values{}
+	}
+
+	values.Set("appid", a.Config.APIKey)
 
 	if ValidateMode(a.Config.Mode) {
-		a.Params.Set("mode", a.Config.Mode)
+		values.Set("mode", a.Config.Mode)
 	}
 
 	if ValidateUnits(a.Config.Units) {
-		a.Params.Set("units", a.Config.Units)
+		values.Set("units", a.Config.Units)
 	}
 
 	if ValidateLang(a.Config.Lang) {
-		a.Params.Set("lang", a.Config.Lang)
+		values.Set("lang", a.Config.Lang)
 	}
 
-	query := a.Params.Encode()
+	query := values.Encode()
 	a.resetParams()
 
 	return fmt.Sprintf("%s?%s", a.Endpoint, query)
