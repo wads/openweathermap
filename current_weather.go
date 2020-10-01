@@ -5,49 +5,35 @@ import (
 	"net/url"
 )
 
-type CurrentOption func(*currentParams)
-
-func StateOption(state string) CurrentOption {
-	return func(c *currentParams) {
-		c.state = state
-	}
-}
-
-func CountryOption(country string) CurrentOption {
-	return func(c *currentParams) {
-		c.country = country
-	}
-}
-
-type CurrentAPI struct {
+type CurrentWeatherAPI struct {
 	*OwmAPI
 }
 
-func NewCurrentAPI(config *Config) (*CurrentAPI, error) {
+func NewCurrentWeatherAPI(config *Config) (*CurrentWeatherAPI, error) {
 	if !ValidateConfig(config) {
-		return nil, errors.New("Invalid Config value")
+		return nil, errors.New("Invalid Config")
 	}
 
-	return &CurrentAPI{NewOwmAPI(config, currentURL)}, nil
+	return &CurrentWeatherAPI{NewOwmAPI(config, currentURL)}, nil
 }
 
-type currentParams struct {
+type cityNameParams struct {
 	country string
 	name    string
 	state   string
 }
 
-func (c currentParams) urlValues() url.Values {
+func (c *cityNameParams) urlValues() url.Values {
 	values := url.Values{}
 
-	if len(c.name) > 0 {
+	if c.name != "" {
 		name := c.name
 
-		if len(c.state) > 0 {
+		if c.state != "" {
 			name += "," + c.state
 		}
 
-		if len(c.country) > 0 {
+		if c.country != "" {
 			name += "," + c.country
 		}
 
@@ -57,14 +43,28 @@ func (c currentParams) urlValues() url.Values {
 	return values
 }
 
-func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*CurrentWeather, error) {
-	params := &currentParams{name: name}
+type CityNameOption func(*cityNameParams)
+
+func StateOption(state string) CityNameOption {
+	return func(c *cityNameParams) {
+		c.state = state
+	}
+}
+
+func CountryOption(country string) CityNameOption {
+	return func(c *cityNameParams) {
+		c.country = country
+	}
+}
+
+func (c *CurrentWeatherAPI) GetByCityName(name string, opts ...CityNameOption) (*CurrentWeather, error) {
+	params := &cityNameParams{name: name}
 
 	for _, opt := range opts {
 		opt(params)
 	}
 
-	c.Params = params.urlValues()
+	c.Params = params
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)
@@ -72,22 +72,22 @@ func (c *CurrentAPI) CurrentByCityName(name string, opts ...CurrentOption) (*Cur
 	return weather, err
 }
 
-func (c *CurrentAPI) CurrentByCityID(id string) (*CurrentWeather, error) {
-	c.Params.Set("id", id)
-
-	weather := &CurrentWeather{}
-	err := c.get(weather)
-
-	return weather, err
+type cityIDParams struct {
+	id string
 }
 
-func (c *CurrentAPI) CurrentByCoord(coord *Coord) (*CurrentWeather, error) {
-	if !ValidateCoord(coord) {
-		return nil, errors.New("Invalid Coord value")
+func (c *cityIDParams) urlValues() url.Values {
+	values := url.Values{}
+
+	if c.id != "" {
+		values.Set("id", c.id)
 	}
 
-	c.Params.Set("lat", coord.Lat.String())
-	c.Params.Set("lon", coord.Lon.String())
+	return values
+}
+
+func (c *CurrentWeatherAPI) GetByCityID(id string) (*CurrentWeather, error) {
+	c.Params = &cityIDParams{id: id}
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)
@@ -95,8 +95,50 @@ func (c *CurrentAPI) CurrentByCoord(coord *Coord) (*CurrentWeather, error) {
 	return weather, err
 }
 
-func (c *CurrentAPI) CurrentByZIPCode(zipCode string) (*CurrentWeather, error) {
-	c.Params.Set("zip", zipCode)
+type coordParams struct {
+	coord *Coord
+}
+
+func (c *coordParams) urlValues() url.Values {
+	values := url.Values{}
+
+	if c.coord != nil {
+		values.Set("lat", c.coord.Lat.String())
+		values.Set("lon", c.coord.Lon.String())
+	}
+
+	return values
+}
+
+func (c *CurrentWeatherAPI) GetByCoord(coord *Coord) (*CurrentWeather, error) {
+	if !ValidateCoord(coord) {
+		return nil, errors.New("Invalid Coord")
+	}
+
+	c.Params = &coordParams{coord: coord}
+
+	weather := &CurrentWeather{}
+	err := c.get(weather)
+
+	return weather, err
+}
+
+type zipCodeParams struct {
+	zipCode string
+}
+
+func (z *zipCodeParams) urlValues() url.Values {
+	values := url.Values{}
+
+	if z.zipCode != "" {
+		values.Set("zip", z.zipCode)
+	}
+
+	return values
+}
+
+func (c *CurrentWeatherAPI) GetByZIPCode(zipCode string) (*CurrentWeather, error) {
+	c.Params = &zipCodeParams{zipCode: zipCode}
 
 	weather := &CurrentWeather{}
 	err := c.get(weather)
