@@ -13,8 +13,8 @@ func (d degree) String() string {
 }
 
 type Coord struct {
-	Lat degree `json:"lat"`
-	Lon degree `json:"lon"`
+	Lat degree
+	Lon degree
 }
 
 func ValidateCoord(coord *Coord) bool {
@@ -62,16 +62,16 @@ func ValidateBoundingBox(bbox *BoundingBox) bool {
 }
 
 type Weather struct {
-	ID          int    `json:"id"`
-	Main        string `json:"main"`
-	Description string `json:"description"`
-	Icon        string `json:"icon"`
+	ID          int
+	Main        string
+	Description string
+	Icon        string
 }
 
 type Main struct {
-	Temp      float32 `json:"temp"`
-	Pressure  int     `json:"pressure"`
-	Humidity  int     `json:"humidity"`
+	Temp      float32
+	Pressure  int
+	Humidity  int
 	TempMin   float32 `json:"temp_min"`
 	TempMax   float32 `json:"temp_max"`
 	SeaLevel  float32 `json:"sea_level"`
@@ -79,13 +79,13 @@ type Main struct {
 }
 
 type Wind struct {
-	Speed float32 `json:"speed"`
-	Deg   int     `json:"deg"`
+	Speed float32
+	Deg   int
 }
 
 type Clouds struct {
-	All   int `json:"all"`
-	Today int `json:"today"`
+	All   int
+	Today int
 }
 
 type Rain struct {
@@ -99,12 +99,12 @@ type Snow struct {
 }
 
 type Sys struct {
-	Type    int     `json:"type"`
-	ID      int     `json:"id"`
-	Message float32 `json:"message"`
-	Country string  `json:"country"`
-	Sunrise int     `json:"sunrise"`
-	Sunset  int     `json:"sunset"`
+	Type    int
+	ID      int
+	Message float32
+	Country string
+	Sunrise int
+	Sunset  int
 }
 
 type CurrentAndForecastWeather struct {
@@ -195,21 +195,21 @@ type FeelsLike struct {
 }
 
 type CurrentWeather struct {
-	Coord      Coord     `json:"coord"`
-	Weather    []Weather `json:"weather"`
-	Base       string    `json:"base"`
-	Main       Main      `json:"main"`
-	Visibility int       `json:"visibility"`
-	Wind       Wind      `json:"wind"`
-	Clouds     Clouds    `json:"clouds"`
-	Rain       Rain      `json:"rain"`
-	Snow       Snow      `json:"snow"`
-	Dt         int       `json:"dt"`
-	Sys        Sys       `json:"sys"`
-	Timezone   int       `json:"timezone"`
-	ID         int       `json:"id"`
-	Name       string    `json:"name"`
-	Cod        int       `json:"cod"`
+	Coord      Coord
+	Weather    []Weather
+	Base       string
+	Main       Main
+	Visibility int
+	Wind       Wind
+	Clouds     Clouds
+	Rain       Rain
+	Snow       Snow
+	Dt         int
+	Sys        Sys
+	Timezone   int
+	ID         int
+	Name       string
+	Cod        int
 }
 
 type CurrentCitiesWeather struct {
