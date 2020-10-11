@@ -108,86 +108,86 @@ type Sys struct {
 }
 
 type CurrentAndForecastWeather struct {
-	Lat            float32    `json:"lat"`
-	Lon            float32    `json:"lon"`
-	Timezone       string     `json:"timezone"`
-	TimezoneOffset int        `json:"timezone_offset"`
-	Current        Current    `json:"current"`
-	Minutely       []Minutely `json:"minutely"`
-	Hourly         []Hourly   `json:"hourly"`
-	Daily          []Daily    `json:"daily"`
+	Lat            float32
+	Lon            float32
+	Timezone       string
+	TimezoneOffset int `json:"timezone_offset"`
+	Current        Current
+	Minutely       []Minutely
+	Hourly         []Hourly
+	Daily          []Daily
 }
 
 type Current struct {
-	Dt         int       `json:"dt"`
-	Sunrise    int       `json:"sunrise"`
-	Sunset     int       `json:"sunset"`
-	Temp       float32   `json:"temp"`
-	FeelsLike  float32   `json:"feels_like"`
-	Pressure   int       `json:"pressure"`
-	Humidity   int       `json:"humidity"`
-	DewPoint   float32   `json:"dew_point"`
-	Clouds     int       `json:"clouds"`
-	Uvi        float32   `json:"uvi"`
-	Visibility int       `json:"visibility"`
-	WindSpeed  float32   `json:"wind_speed"`
-	WindGust   float32   `json:"wind_gust"`
-	WindDeg    int       `json:"wind_deg"`
-	Rain       Rain      `json:"rain"`
-	Snow       Snow      `json:"snow"`
-	Weather    []Weather `json:"weather"`
+	Dt         int
+	Sunrise    int
+	Sunset     int
+	Temp       float32
+	FeelsLike  float32 `json:"feels_like"`
+	Pressure   int
+	Humidity   int
+	DewPoint   float32 `json:"dew_point"`
+	Clouds     int
+	Uvi        float32
+	Visibility int
+	WindSpeed  float32 `json:"wind_speed"`
+	WindGust   float32 `json:"wind_gust"`
+	WindDeg    int     `json:"wind_deg"`
+	Rain       Rain
+	Snow       Snow
+	Weather    []Weather
 }
 
 type Minutely struct {
-	Dt            int     `json:"dt"`
-	Precipitation float32 `json:"precipitation"`
+	Dt            int
+	Precipitation float32
 }
 
 type Hourly struct {
-	Dt         int       `json:"dt"`
-	Temp       float32   `json:"temp"`
-	FeelsLike  float32   `json:"feels_like"`
-	Pressure   int       `json:"pressure"`
-	Humidity   int       `json:"humidity"`
-	DewPoint   float32   `json:"dew_point"`
-	Clouds     int       `json:"clouds"`
-	Visibility int       `json:"visibility"`
-	WindSpeed  float32   `json:"wind_speed"`
-	WindGust   float32   `json:"wind_gust"`
-	WindDeg    int       `json:"wind_deg"`
-	Rain       Rain      `json:"rain"`
-	Snow       Snow      `json:"snow"`
-	Weather    []Weather `json:"weather"`
+	Dt         int
+	Temp       float32
+	FeelsLike  float32 `json:"feels_like"`
+	Pressure   int
+	Humidity   int
+	DewPoint   float32 `json:"dew_point"`
+	Clouds     int
+	Visibility int
+	WindSpeed  float32 `json:"wind_speed"`
+	WindGust   float32 `json:"wind_gust"`
+	WindDeg    int     `json:"wind_deg"`
+	Rain       Rain
+	Snow       Snow
+	Weather    []Weather
 }
 
 type Daily struct {
-	Dt         int       `json:"dt"`
-	Temp       Temp      `json:"temp"`
+	Dt         int
+	Temp       Temp
 	FeelsLike  FeelsLike `json:"feels_like"`
-	Pressure   int       `json:"pressure"`
-	Humidity   int       `json:"humidity"`
-	DewPoint   float32   `json:"dew_point"`
-	Clouds     int       `json:"clouds"`
-	Visibility int       `json:"visibility"`
-	WindSpeed  float32   `json:"wind_speed"`
-	WindGust   float32   `json:"wind_gust"`
-	WindDeg    int       `json:"wind_deg"`
-	Rain       float32   `json:"rain"`
-	Snow       Snow      `json:"snow"`
-	Weather    []Weather `json:"weather"`
+	Pressure   int
+	Humidity   int
+	DewPoint   float32 `json:"dew_point"`
+	Clouds     int
+	Visibility int
+	WindSpeed  float32 `json:"wind_speed"`
+	WindGust   float32 `json:"wind_gust"`
+	WindDeg    int     `json:"wind_deg"`
+	Rain       float32
+	Snow       Snow
+	Weather    []Weather
 }
 
 type TimeOfDay struct {
-	Morn  float32 `json:"morn"`
-	Day   float32 `json:"day"`
-	Eve   float32 `json:"eve"`
-	Night float32 `json:"night"`
+	Morn  float32
+	Day   float32
+	Eve   float32
+	Night float32
 }
 
 type Temp struct {
 	TimeOfDay
-	Min float32 `json:"min"`
-	Max float32 `json:"max"`
+	Min float32
+	Max float32
 }
 
 type FeelsLike struct {
