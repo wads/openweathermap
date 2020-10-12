@@ -137,13 +137,8 @@ type OwmAPI struct {
 
 func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
 	api := &OwmAPI{Config: config, Endpoint: endpoint}
-	api.resetParams()
 
 	return api
-}
-
-func (a *OwmAPI) resetParams() {
-	a.Params = nil
 }
 
 func (a *OwmAPI) apiURL() string {
@@ -169,7 +164,6 @@ func (a *OwmAPI) apiURL() string {
 	}
 
 	query := values.Encode()
-	a.resetParams()
 
 	return fmt.Sprintf("%s?%s", a.Endpoint, query)
 }
