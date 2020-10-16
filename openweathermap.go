@@ -72,11 +72,12 @@ var Lang = map[string]string{
 }
 
 const (
-	currentURL = "https://api.openweathermap.org/data/2.5/weather"
-	boxCityURL = "https://api.openweathermap.org/data/2.5/box/city"
-	findURL    = "https://api.openweathermap.org/data/2.5/find"
-	groupURL   = "https://api.openweathermap.org/data/2.5/group"
-	oneCallURL = "https://api.openweathermap.org/data/2.5/onecall"
+	boxCityURL  = "https://api.openweathermap.org/data/2.5/box/city"
+	cityListURL = "http://bulk.openweathermap.org/sample/city.list.json.gz"
+	currentURL  = "https://api.openweathermap.org/data/2.5/weather"
+	findURL     = "https://api.openweathermap.org/data/2.5/find"
+	groupURL    = "https://api.openweathermap.org/data/2.5/group"
+	oneCallURL  = "https://api.openweathermap.org/data/2.5/onecall"
 )
 
 type APICallError struct {

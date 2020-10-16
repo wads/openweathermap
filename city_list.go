@@ -7,36 +7,33 @@ import (
 	"net/http"
 )
 
-type OpenWeatherMapCity struct {
-	City []City
-}
-
 type City struct {
-	Id      int    `json:"id"`
-	Name    string `json:"name"`
-	Country string `json:"country"`
-	Coord   Coord  `json:"coord"`
+	ID      int
+	Name    string
+	Country string
+	Coord   Coord
 }
 
-const cityListURL = "http://bulk.openweathermap.org/sample/city.list.json.gz"
+type OWMCities struct {
+	Cities []City
+	Len    int
+}
 
-var openWeatherMapCity *OpenWeatherMapCity
+var cityList OWMCities
 
-func NewOpenWeatherMapCity() (*OpenWeatherMapCity, error) {
-	if openWeatherMapCity == nil {
+func NewOWMCityList() (*OWMCities, error) {
+	if len(cityList.Cities) == 0 {
 		raw, err := loadCityListJSON()
 		if err != nil {
 			return nil, err
 		}
 
-		var cities []City
-		err = json.Unmarshal(raw, &cities)
+		err = json.Unmarshal(raw, &cityList)
 		if err != nil {
 			return nil, err
 		}
-		openWeatherMapCity = &OpenWeatherMapCity{cities}
 	}
-	return openWeatherMapCity, nil
+	return &cityList, nil
 }
 
 func loadCityListJSON() ([]byte, error) {
@@ -53,4 +50,29 @@ func loadCityListJSON() ([]byte, error) {
 	defer zr.Close()
 
 	return ioutil.ReadAll(zr)
+}
+
+func (o *OWMCities) UnmarshalJSON(data []byte) error {
+	type tempCity struct {
+		ID      float32
+		Name    string
+		Country string
+		Coord   Coord
+	}
+	var cities []tempCity
+
+	if err := json.Unmarshal(data, &cities); err != nil {
+		return err
+	}
+
+	for _, city := range cities {
+
+		o.Cities = append(
+			o.Cities,
+			City{ID: int(city.ID), Name: city.Name, Country: city.Country, Coord: city.Coord},
+		)
+	}
+	o.Len = len(cities)
+
+	return nil
 }
