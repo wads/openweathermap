@@ -1,4 +1,4 @@
-package openweathermap
+package owm
 
 import (
 	"encoding/json"
