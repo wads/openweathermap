@@ -131,13 +131,13 @@ type Params interface {
 }
 
 type OwmAPI struct {
-	Config   *Config
-	Endpoint string
-	Params   Params
+	Config *Config
+	URL    string
+	Params Params
 }
 
 func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
-	api := &OwmAPI{Config: config, Endpoint: endpoint}
+	api := &OwmAPI{Config: config, URL: endpoint}
 
 	return api
 }
@@ -166,7 +166,7 @@ func (a *OwmAPI) apiURL() string {
 
 	query := values.Encode()
 
-	return fmt.Sprintf("%s?%s", a.Endpoint, query)
+	return fmt.Sprintf("%s?%s", a.URL, query)
 }
 
 func (a *OwmAPI) get(dest interface{}) error {
