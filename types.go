@@ -118,6 +118,15 @@ type CurrentAndForecastWeather struct {
 	Daily          []Daily
 }
 
+type PreviousWeather struct {
+	Lat            float32
+	Lon            float32
+	Timezone       string
+	TimezoneOffset int `json:"timezone_offset"`
+	Current        Current
+	Hourly         []Hourly
+}
+
 type Current struct {
 	Dt         int
 	Sunrise    int

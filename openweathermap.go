@@ -72,12 +72,13 @@ var Lang = map[string]string{
 }
 
 const (
-	boxCityURL  = "https://api.openweathermap.org/data/2.5/box/city"
-	cityListURL = "http://bulk.openweathermap.org/sample/city.list.json.gz"
-	currentURL  = "https://api.openweathermap.org/data/2.5/weather"
-	findURL     = "https://api.openweathermap.org/data/2.5/find"
-	groupURL    = "https://api.openweathermap.org/data/2.5/group"
-	oneCallURL  = "https://api.openweathermap.org/data/2.5/onecall"
+	boxCityURL     = "https://api.openweathermap.org/data/2.5/box/city"
+	cityListURL    = "http://bulk.openweathermap.org/sample/city.list.json.gz"
+	currentURL     = "https://api.openweathermap.org/data/2.5/weather"
+	findURL        = "https://api.openweathermap.org/data/2.5/find"
+	groupURL       = "https://api.openweathermap.org/data/2.5/group"
+	oneCallURL     = "https://api.openweathermap.org/data/2.5/onecall"
+	oneCallPrevURL = "https://api.openweathermap.org/data/2.5/onecall/timemachine"
 )
 
 type APICallError struct {
@@ -143,6 +144,10 @@ func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
 }
 
 func (a *OwmAPI) apiURL() string {
+	if a.URL == "" {
+		return ""
+	}
+
 	var values url.Values
 	if a.Params != nil {
 		values = a.Params.urlValues()
@@ -164,9 +169,7 @@ func (a *OwmAPI) apiURL() string {
 		values.Set("lang", a.Config.Lang)
 	}
 
-	query := values.Encode()
-
-	return fmt.Sprintf("%s?%s", a.URL, query)
+	return fmt.Sprintf("%s?%s", a.URL, values.Encode())
 }
 
 func (a *OwmAPI) get(dest interface{}) error {
