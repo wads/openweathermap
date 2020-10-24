@@ -38,12 +38,12 @@ func (r *rectZoneParams) urlValues() url.Values {
 }
 
 func (s *CurrentCitiesWeatherAPI) GetWithinRectZone(bbox *BoundingBox) (*CurrentCitiesWeather, error) {
-	s.URL = boxCityURL
-
 	if !ValidateBoundingBox(bbox) {
 		return nil, errors.New("Invalid BoundingBox")
 	}
+
 	s.Params = &rectZoneParams{bbox: bbox}
+	s.URL = boxCityURL
 
 	weather := &CurrentCitiesWeather{}
 	err := s.get(weather)
@@ -52,12 +52,12 @@ func (s *CurrentCitiesWeatherAPI) GetWithinRectZone(bbox *BoundingBox) (*Current
 }
 
 func (s *CurrentCitiesWeatherAPI) GetInCircle(coord *Coord) (*CurrentCitiesWeather, error) {
-	s.URL = findURL
-
 	if !ValidateCoord(coord) {
 		return nil, errors.New("Invalid Coord")
 	}
+
 	s.Params = &coordParams{coord: coord}
+	s.URL = findURL
 
 	weather := &CurrentCitiesWeather{}
 	err := s.get(weather)
@@ -84,9 +84,8 @@ func (c *cityIDsParams) urlValues() url.Values {
 }
 
 func (s *CurrentCitiesWeatherAPI) GetByCityIDs(ids []int) (*CurrentCitiesWeather, error) {
-	s.URL = groupURL
-
 	s.Params = &cityIDsParams{ids: ids}
+	s.URL = groupURL
 
 	weather := &CurrentCitiesWeather{}
 	err := s.get(weather)
