@@ -72,13 +72,13 @@ var Lang = map[string]string{
 }
 
 const (
-	boxCityURL     = "https://api.openweathermap.org/data/2.5/box/city"
-	cityListURL    = "http://bulk.openweathermap.org/sample/city.list.json.gz"
-	currentURL     = "https://api.openweathermap.org/data/2.5/weather"
-	findURL        = "https://api.openweathermap.org/data/2.5/find"
-	groupURL       = "https://api.openweathermap.org/data/2.5/group"
-	oneCallURL     = "https://api.openweathermap.org/data/2.5/onecall"
-	oneCallPrevURL = "https://api.openweathermap.org/data/2.5/onecall/timemachine"
+	boxCityURL     = "api.openweathermap.org/data/2.5/box/city"
+	cityListURL    = "bulk.openweathermap.org/sample/city.list.json.gz"
+	currentURL     = "api.openweathermap.org/data/2.5/weather"
+	findURL        = "api.openweathermap.org/data/2.5/find"
+	groupURL       = "api.openweathermap.org/data/2.5/group"
+	oneCallURL     = "api.openweathermap.org/data/2.5/onecall"
+	oneCallPrevURL = "api.openweathermap.org/data/2.5/onecall/timemachine"
 )
 
 type APICallError struct {
@@ -137,13 +137,13 @@ type OwmAPI struct {
 	Params Params
 }
 
-func NewOwmAPI(config *Config, endpoint string) *OwmAPI {
-	api := &OwmAPI{Config: config, URL: endpoint}
+func NewOwmAPI(config *Config, url string) *OwmAPI {
+	api := &OwmAPI{Config: config, URL: url}
 
 	return api
 }
 
-func (a *OwmAPI) apiURL() string {
+func (a *OwmAPI) generateEndpoint() string {
 	if a.URL == "" {
 		return ""
 	}
@@ -169,11 +169,16 @@ func (a *OwmAPI) apiURL() string {
 		values.Set("lang", a.Config.Lang)
 	}
 
-	return fmt.Sprintf("%s?%s", a.URL, values.Encode())
+	return fmt.Sprintf("https://%s?%s", a.URL, values.Encode())
 }
 
 func (a *OwmAPI) get(dest interface{}) error {
-	res, err := http.Get(a.apiURL())
+	endpoint := a.generateEndpoint()
+	if endpoint == "" {
+		return fmt.Errorf("URL is not set")
+	}
+
+	res, err := http.Get(endpoint)
 	if err != nil {
 		return err
 	}
