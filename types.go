@@ -116,6 +116,7 @@ type CurrentAndForecastWeather struct {
 	Minutely       []Minutely
 	Hourly         []Hourly
 	Daily          []Daily
+	Alerts         []Alerts
 }
 
 type PreviousWeather struct {
@@ -201,6 +202,14 @@ type Temp struct {
 
 type FeelsLike struct {
 	TimeOfDay
+}
+
+type Alerts struct {
+	SenderName  string `json:"sender_name"`
+	Event       string
+	Start       int64
+	End         int64
+	Description string
 }
 
 type CurrentWeather struct {
