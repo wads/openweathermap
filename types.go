@@ -103,8 +103,8 @@ type Sys struct {
 	ID      int
 	Message float32
 	Country string
-	Sunrise int
-	Sunset  int
+	Sunrise int64
+	Sunset  int64
 }
 
 type CurrentAndForecastWeather struct {
@@ -129,9 +129,9 @@ type PreviousWeather struct {
 }
 
 type Current struct {
-	Dt         int
-	Sunrise    int
-	Sunset     int
+	Dt         int64
+	Sunrise    int64
+	Sunset     int64
 	Temp       float32
 	FeelsLike  float32 `json:"feels_like"`
 	Pressure   int
@@ -149,12 +149,12 @@ type Current struct {
 }
 
 type Minutely struct {
-	Dt            int
+	Dt            int64
 	Precipitation float32
 }
 
 type Hourly struct {
-	Dt         int
+	Dt         int64
 	Temp       float32
 	FeelsLike  float32 `json:"feels_like"`
 	Pressure   int
@@ -171,7 +171,7 @@ type Hourly struct {
 }
 
 type Daily struct {
-	Dt         int
+	Dt         int64
 	Temp       Temp
 	FeelsLike  FeelsLike `json:"feels_like"`
 	Pressure   int
@@ -222,7 +222,7 @@ type CurrentWeather struct {
 	Clouds     Clouds
 	Rain       Rain
 	Snow       Snow
-	Dt         int
+	Dt         int64
 	Sys        Sys
 	Timezone   int
 	ID         int
