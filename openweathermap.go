@@ -8,11 +8,6 @@ import (
 	"net/url"
 )
 
-var Mode = map[string]string{
-	"xml":  "xml",
-	"html": "html",
-}
-
 var Units = map[string]string{
 	"imperial": "Temperature in Fahrenheit and wind speed in miles/hour",
 	"metric":   "Temperature in Celsius and wind speed in meter/sec",
@@ -92,18 +87,11 @@ func (a APICallError) Error() string {
 
 type Config struct {
 	APIKey string
-	Mode   string
 	Units  string
 	Lang   string
 }
 
 type ConfigOption func(*Config)
-
-func ModeOption(mode string) ConfigOption {
-	return func(c *Config) {
-		c.Mode = mode
-	}
-}
 
 func UnitsOption(units string) ConfigOption {
 	return func(c *Config) {
@@ -157,10 +145,6 @@ func (a *OwmAPI) generateEndpoint() string {
 
 	values.Set("appid", a.Config.APIKey)
 
-	if ValidateMode(a.Config.Mode) {
-		values.Set("mode", a.Config.Mode)
-	}
-
 	if ValidateUnits(a.Config.Units) {
 		values.Set("units", a.Config.Units)
 	}
@@ -207,11 +191,6 @@ func handleAPICallError(respBody []byte) error {
 
 func ValidateConfig(c *Config) bool {
 	return len(c.APIKey) > 0
-}
-
-func ValidateMode(mode string) bool {
-	_, ok := Mode[mode]
-	return ok
 }
 
 func ValidateUnits(units string) bool {

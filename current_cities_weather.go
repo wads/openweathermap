@@ -16,10 +16,6 @@ func NewCurrentCitiesWeatherAPI(config *Config) (*CurrentCitiesWeatherAPI, error
 		return nil, errors.New("Invalid Config")
 	}
 
-	if config.Mode != "" {
-		return nil, errors.New("JSON format is only available for CurrentCitiesWeatherAPI")
-	}
-
 	return &CurrentCitiesWeatherAPI{NewOwmAPI(config, "")}, nil
 }
 

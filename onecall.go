@@ -15,10 +15,6 @@ func NewOneCallAPI(config *Config) (*OneCallAPI, error) {
 		return nil, errors.New("Invalid Config")
 	}
 
-	if config.Mode != "" {
-		return nil, errors.New("JSON format is only available for CurrentCitiesWeatherAPI")
-	}
-
 	return &OneCallAPI{NewOwmAPI(config, "")}, nil
 }
 
