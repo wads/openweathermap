@@ -45,13 +45,13 @@ func (c *cityNameParams) urlValues() url.Values {
 
 type CityNameOption func(*cityNameParams)
 
-func StateOption(state string) CityNameOption {
+func WithStateOption(state string) CityNameOption {
 	return func(c *cityNameParams) {
 		c.state = state
 	}
 }
 
-func CountryOption(country string) CityNameOption {
+func WithCountryOption(country string) CityNameOption {
 	return func(c *cityNameParams) {
 		c.country = country
 	}

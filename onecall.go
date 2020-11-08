@@ -38,7 +38,7 @@ func (o *oneCallParams) urlValues() url.Values {
 
 type OneCallOption func(*oneCallParams)
 
-func ExcludeOption(exclude string) OneCallOption {
+func WithExcludeOption(exclude string) OneCallOption {
 	return func(o *oneCallParams) {
 		o.exclude = "exclude"
 	}

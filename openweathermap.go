@@ -93,13 +93,13 @@ type Config struct {
 
 type ConfigOption func(*Config)
 
-func UnitsOption(units string) ConfigOption {
+func WithUnitsOption(units string) ConfigOption {
 	return func(c *Config) {
 		c.Units = units
 	}
 }
 
-func LangOption(lang string) ConfigOption {
+func WithLangOption(lang string) ConfigOption {
 	return func(c *Config) {
 		c.Lang = lang
 	}
