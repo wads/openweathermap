@@ -143,6 +143,12 @@ func (a *OwmAPI) generateEndpoint() string {
 		values = url.Values{}
 	}
 
+	a.setCommonParams(&values)
+
+	return fmt.Sprintf("https://%s?%s", a.URL, values.Encode())
+}
+
+func (a *OwmAPI) setCommonParams(values *url.Values) {
 	values.Set("appid", a.Config.APIKey)
 
 	if ValidateUnits(a.Config.Units) {
@@ -152,8 +158,6 @@ func (a *OwmAPI) generateEndpoint() string {
 	if ValidateLang(a.Config.Lang) {
 		values.Set("lang", a.Config.Lang)
 	}
-
-	return fmt.Sprintf("https://%s?%s", a.URL, values.Encode())
 }
 
 func (a *OwmAPI) get(dest interface{}) error {
