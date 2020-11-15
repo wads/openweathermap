@@ -23,9 +23,7 @@ type cityNameParams struct {
 	state   string
 }
 
-func (c *cityNameParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (c *cityNameParams) setQuery(values url.Values) {
 	if c.name != "" {
 		name := c.name
 
@@ -39,8 +37,6 @@ func (c *cityNameParams) urlValues() url.Values {
 
 		values.Set("q", name)
 	}
-
-	return values
 }
 
 type CityNameOption func(*cityNameParams)
@@ -76,14 +72,10 @@ type cityIDParams struct {
 	id string
 }
 
-func (c *cityIDParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (c *cityIDParams) setQuery(values url.Values) {
 	if c.id != "" {
 		values.Set("id", c.id)
 	}
-
-	return values
 }
 
 func (c *CurrentWeatherAPI) GetByCityID(id string) (*CurrentWeather, error) {
@@ -99,15 +91,11 @@ type coordParams struct {
 	coord *Coord
 }
 
-func (c *coordParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (c *coordParams) setQuery(values url.Values) {
 	if c.coord != nil {
 		values.Set("lat", c.coord.Lat.String())
 		values.Set("lon", c.coord.Lon.String())
 	}
-
-	return values
 }
 
 func (c *CurrentWeatherAPI) GetByCoord(coord *Coord) (*CurrentWeather, error) {
@@ -127,14 +115,10 @@ type zipCodeParams struct {
 	zipCode string
 }
 
-func (z *zipCodeParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (z *zipCodeParams) setQuery(values url.Values) {
 	if z.zipCode != "" {
 		values.Set("zip", z.zipCode)
 	}
-
-	return values
 }
 
 func (c *CurrentWeatherAPI) GetByZIPCode(zipCode string) (*CurrentWeather, error) {

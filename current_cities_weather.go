@@ -23,14 +23,10 @@ type rectZoneParams struct {
 	bbox *BoundingBox
 }
 
-func (r *rectZoneParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (r *rectZoneParams) setQuery(values url.Values) {
 	if r.bbox != nil {
 		values.Set("bbox", r.bbox.String())
 	}
-
-	return values
 }
 
 func (s *CurrentCitiesWeatherAPI) GetWithinRectZone(bbox *BoundingBox) (*CurrentCitiesWeather, error) {
@@ -65,9 +61,7 @@ type cityIDsParams struct {
 	ids []int
 }
 
-func (c *cityIDsParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (c *cityIDsParams) setQuery(values url.Values) {
 	if len(c.ids) > 0 {
 		ids := make([]string, len(c.ids))
 		for i := range c.ids {
@@ -75,8 +69,6 @@ func (c *cityIDsParams) urlValues() url.Values {
 		}
 		values.Set("id", strings.Join(ids, ","))
 	}
-
-	return values
 }
 
 func (s *CurrentCitiesWeatherAPI) GetByCityIDs(ids []int) (*CurrentCitiesWeather, error) {

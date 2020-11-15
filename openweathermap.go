@@ -116,7 +116,7 @@ func NewConfig(apiKey string, opts ...ConfigOption) *Config {
 }
 
 type Params interface {
-	urlValues() url.Values
+	setQuery(values url.Values)
 }
 
 type OwmAPI struct {
@@ -126,29 +126,28 @@ type OwmAPI struct {
 }
 
 func NewOwmAPI(config *Config, url string) *OwmAPI {
-	api := &OwmAPI{Config: config, URL: url}
-
-	return api
+	return &OwmAPI{Config: config, URL: url}
 }
 
-func (a *OwmAPI) generateEndpoint() string {
+func (a *OwmAPI) endpoint() string {
 	if a.URL == "" {
 		return ""
 	}
 
-	var values url.Values
-	if a.Params != nil {
-		values = a.Params.urlValues()
-	} else {
-		values = url.Values{}
+	query := a.queryParams()
+	if query == nil {
+		return ""
 	}
 
-	a.setCommonParams(&values)
-
-	return fmt.Sprintf("https://%s?%s", a.URL, values.Encode())
+	return fmt.Sprintf("https://%s?%s", a.URL, query.Encode())
 }
 
-func (a *OwmAPI) setCommonParams(values *url.Values) {
+func (a *OwmAPI) queryParams() url.Values {
+	if !ValidateAPIKey(a.Config.APIKey) {
+		return nil
+	}
+
+	values := url.Values{}
 	values.Set("appid", a.Config.APIKey)
 
 	if ValidateUnits(a.Config.Units) {
@@ -158,10 +157,16 @@ func (a *OwmAPI) setCommonParams(values *url.Values) {
 	if ValidateLang(a.Config.Lang) {
 		values.Set("lang", a.Config.Lang)
 	}
+
+	if a.Params != nil {
+		a.Params.setQuery(values)
+	}
+
+	return values
 }
 
 func (a *OwmAPI) get(dest interface{}) error {
-	endpoint := a.generateEndpoint()
+	endpoint := a.endpoint()
 	if endpoint == "" {
 		return fmt.Errorf("URL is not set")
 	}
@@ -170,9 +175,9 @@ func (a *OwmAPI) get(dest interface{}) error {
 	if err != nil {
 		return err
 	}
+	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
-	res.Body.Close()
 	if err != nil {
 		return err
 	}
@@ -194,7 +199,11 @@ func handleAPICallError(respBody []byte) error {
 }
 
 func ValidateConfig(c *Config) bool {
-	return len(c.APIKey) > 0
+	return ValidateAPIKey(c.APIKey)
+}
+
+func ValidateAPIKey(apiKey string) bool {
+	return len(apiKey) > 0
 }
 
 func ValidateUnits(units string) bool {

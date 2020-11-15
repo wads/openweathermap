@@ -23,17 +23,13 @@ type oneCallParams struct {
 	exclude string
 }
 
-func (o *oneCallParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (o *oneCallParams) setQuery(values url.Values) {
 	values.Set("lat", o.coord.Lat.String())
 	values.Set("lon", o.coord.Lon.String())
 
 	if o.exclude != "" {
 		values.Set("exclude", o.exclude)
 	}
-
-	return values
 }
 
 type OneCallOption func(*oneCallParams)
@@ -68,14 +64,10 @@ type oneCallPrevParams struct {
 	dt    int64
 }
 
-func (o *oneCallPrevParams) urlValues() url.Values {
-	values := url.Values{}
-
+func (o *oneCallPrevParams) setQuery(values url.Values) {
 	values.Set("lat", o.coord.Lat.String())
 	values.Set("lon", o.coord.Lon.String())
 	values.Set("dt", fmt.Sprintf("%d", o.dt))
-
-	return values
 }
 
 func (o *OneCallAPI) GetPrevWeather(coord *Coord, dt int64) (*PreviousWeather, error) {
