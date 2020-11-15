@@ -54,7 +54,7 @@ func (o *OneCallAPI) GetWeather(coord *Coord, opts ...OneCallOption) (*CurrentAn
 	o.URL = oneCallURL
 
 	weather := &CurrentAndForecastWeather{}
-	err := o.get(weather)
+	err := o.getAndLoad(weather)
 
 	return weather, err
 }
@@ -81,7 +81,7 @@ func (o *OneCallAPI) GetPrevWeather(coord *Coord, dt int64) (*PreviousWeather, e
 	o.URL = oneCallPrevURL
 
 	weather := &PreviousWeather{}
-	err := o.get(weather)
+	err := o.getAndLoad(weather)
 
 	return weather, err
 }

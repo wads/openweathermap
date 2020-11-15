@@ -38,7 +38,7 @@ func (s *CurrentCitiesWeatherAPI) GetWithinRectZone(bbox *BoundingBox) (*Current
 	s.URL = boxCityURL
 
 	weather := &CurrentCitiesWeather{}
-	err := s.get(weather)
+	err := s.getAndLoad(weather)
 
 	return weather, err
 }
@@ -52,7 +52,7 @@ func (s *CurrentCitiesWeatherAPI) GetInCircle(coord *Coord) (*CurrentCitiesWeath
 	s.URL = findURL
 
 	weather := &CurrentCitiesWeather{}
-	err := s.get(weather)
+	err := s.getAndLoad(weather)
 
 	return weather, err
 }
@@ -76,7 +76,7 @@ func (s *CurrentCitiesWeatherAPI) GetByCityIDs(ids []int) (*CurrentCitiesWeather
 	s.URL = groupURL
 
 	weather := &CurrentCitiesWeather{}
-	err := s.get(weather)
+	err := s.getAndLoad(weather)
 
 	return weather, err
 }

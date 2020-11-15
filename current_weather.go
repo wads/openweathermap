@@ -63,7 +63,7 @@ func (c *CurrentWeatherAPI) GetByCityName(name string, opts ...CityNameOption) (
 	c.Params = params
 
 	weather := &CurrentWeather{}
-	err := c.get(weather)
+	err := c.getAndLoad(weather)
 
 	return weather, err
 }
@@ -82,7 +82,7 @@ func (c *CurrentWeatherAPI) GetByCityID(id string) (*CurrentWeather, error) {
 	c.Params = &cityIDParams{id: id}
 
 	weather := &CurrentWeather{}
-	err := c.get(weather)
+	err := c.getAndLoad(weather)
 
 	return weather, err
 }
@@ -106,7 +106,7 @@ func (c *CurrentWeatherAPI) GetByCoord(coord *Coord) (*CurrentWeather, error) {
 	c.Params = &coordParams{coord: coord}
 
 	weather := &CurrentWeather{}
-	err := c.get(weather)
+	err := c.getAndLoad(weather)
 
 	return weather, err
 }
@@ -125,7 +125,7 @@ func (c *CurrentWeatherAPI) GetByZIPCode(zipCode string) (*CurrentWeather, error
 	c.Params = &zipCodeParams{zipCode: zipCode}
 
 	weather := &CurrentWeather{}
-	err := c.get(weather)
+	err := c.getAndLoad(weather)
 
 	return weather, err
 }

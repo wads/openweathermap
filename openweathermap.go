@@ -165,28 +165,32 @@ func (a *OwmAPI) queryParams() url.Values {
 	return values
 }
 
-func (a *OwmAPI) get(dest interface{}) error {
-	endpoint := a.endpoint()
-	if endpoint == "" {
-		return fmt.Errorf("URL is not set")
-	}
-
-	res, err := http.Get(endpoint)
+func (a *OwmAPI) getAndLoad(dest interface{}) error {
+	resp, err := a.get()
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	if res.StatusCode != 200 {
+	if resp.StatusCode != 200 {
 		return handleAPICallError(body)
 	}
 
 	return json.Unmarshal(body, &dest)
+}
+
+func (a *OwmAPI) get() (*http.Response, error) {
+	endpoint := a.endpoint()
+	if endpoint == "" {
+		return nil, fmt.Errorf("URL is not set")
+	}
+
+	return http.Get(endpoint)
 }
 
 func handleAPICallError(respBody []byte) error {
