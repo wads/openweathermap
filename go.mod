@@ -1,3 +1,3 @@
-module github.com/wads/openweathermap
+module github.com/wads/owm
 
 go 1.14
